@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
-from mlearn.base import get_numpy_data, regression_gradient_descent, predict_output
+from mlearn.base import get_numpy_data, predict_output
+from mlearn.learning_algo import gradient_descent
 
 # Load in house sales data
 # Dataset is from house sales in King County, the region where the city of Seattle, WA is located
@@ -30,7 +31,7 @@ tolerance = 1e9
 max_iter = 1000
 
 # train model
-weights_model = regression_gradient_descent(feature_matrix, output, initial_weights, step_size, tolerance, max_iter)
+weights_model = gradient_descent(feature_matrix, output, initial_weights, step_size, tolerance, max_iter)
 print('feature weights: %s' % weights_model)
 
 # evaluate mode performance
