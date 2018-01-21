@@ -1,7 +1,11 @@
 import numpy as np
 import pandas as pd
+from math import sqrt
 
 
+# --------------------------------------------------------------------------------------------------------------------
+# Base functions
+# --------------------------------------------------------------------------------------------------------------------
 def get_numpy_data(dataframe, features, output):
 
     """
@@ -49,3 +53,54 @@ def predict_output(feature_matrix, weights):
     predictions = np.dot(feature_matrix, weights)
 
     return predictions
+
+
+# --------------------------------------------------------------------------------------------------------------------
+# Linear Regression Implementation
+# --------------------------------------------------------------------------------------------------------------------
+def feature_derivative(errors, feature):
+    # Assume that errors and feature are both numpy arrays of the same length (number of data points)
+    # compute twice the dot product of these vectors as 'derivative' and return the value
+    derivative = 2 * np.dot(errors, feature)
+    return derivative
+
+
+def regression_gradient_descent(feature_matrix, output, initial_weights, step_size, tolerance, max_iter):
+    converged = False
+    weights = np.array(initial_weights) # make sure it's a numpy array
+    iter_count = 0
+
+    while not converged:
+
+        # compute the predictions based on feature_matrix and weights using your predict_output() function
+        predictions = predict_output(feature_matrix, weights)
+
+        # compute the errors as predictions - output
+        errors = predictions - output
+
+        # initialize the gradient sum of squares
+        gradient_sum_squares = 0
+
+        # while we haven't reached the tolerance yet, update each feature's weight
+        for i in range(len(weights)):
+            # feature_matrix[:, i] is the feature column associated with weights[i]
+            # compute the derivative for weight[i]:
+            derivative = feature_derivative(errors, feature_matrix[:, i])
+
+            # add the squared value of the derivative to the gradient sum of squares (for assessing convergence)
+            gradient_sum_squares += derivative ** 2
+
+            # subtract the step size times the derivative from the current weight
+            weights[i] = weights[i] - (step_size * derivative)
+
+        iter_count += 1
+
+        # compute the square-root of the gradient sum of squares to get the gradient magnitude:
+        gradient_magnitude = sqrt(gradient_sum_squares)
+
+        print('iter %s | gradient_magnitude: %s' % (iter_count, gradient_magnitude))
+
+        if gradient_magnitude < tolerance or iter_count >= max_iter:
+            converged = True
+
+    return weights
